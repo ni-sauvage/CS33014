@@ -10,6 +10,8 @@
                 "${fileDirname}/*.c",
                 "${fileDirname}/*.h",
                 "-msse4",
+                "-omp",
+                "-lm",
                 "-o",
                 "${fileDirname}/build/${fileBasenameNoExtension}"
             ],

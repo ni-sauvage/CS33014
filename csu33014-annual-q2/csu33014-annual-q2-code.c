@@ -54,12 +54,20 @@ bool * find_duplicates_sequential(char ** list_a, int size_a,
 // And write your parallel code here:
 bool * find_duplicates_parallel(char ** list_a, int size_a,
 				char ** list_b, int size_b) {
-  bool * result;
+  bool * duplicates = malloc(sizeof(bool) * size_a);
+  #pragma omp parallel for
+  for ( int i = 0; i < size_a; i++ ) { // for each string in list_a
+    int is_duplicate = 0;
+    for ( int j = 0; j < size_b; j++ ) { // for each string in list_b
+      if ( !strcmp(list_a[i], list_b[j]) ) {
+	// the two strings are equal; list_a[i] is in list_b
+	      is_duplicate = 1;
+      }
+    }
+    duplicates[i] = is_duplicate;
+  }
   
-  // PLEASE REPLACE THE FOLLOWING CALL WITH YOUR PARALLEL CODE
-  result = find_duplicates_sequential(list_a, size_a, list_b, size_b);
-  
-  return result;
+  return duplicates;
 }
 
 

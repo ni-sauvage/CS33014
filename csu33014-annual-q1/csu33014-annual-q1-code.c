@@ -228,24 +228,23 @@ void Q1_routine_5(float * restrict a, float * restrict b,
 // in the following, size can have any positive value
 void Q1_vectorized_5(float * restrict a, float * restrict b,
                      float * restrict c, int size) {
-  __m128 v4a, v4b, v4c, v4ac, v4ab, v4bc, v4ca, v4ba, v4cb;
+  __m128 v4a, v4b, v4c, temp;
   int i;
   for ( i = 0; i < size-3; i+=4 ) {
     v4a = _mm_loadu_ps(a + i);
     v4b = _mm_loadu_ps(b + i);
     v4c = _mm_loadu_ps(c + i);
-    v4ac = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4a, v4c), v4c), _mm_and_ps(_mm_cmpgt_ps(v4a, v4c), v4a));
-    v4ca = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4a, v4c), v4a), _mm_and_ps(_mm_cmpgt_ps(v4a, v4c), v4c));
-    _mm_storeu_ps(a+i, v4ca);
-    _mm_storeu_ps(c+i, v4ac);
-    v4ab = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4a, v4b), v4b), _mm_and_ps(_mm_cmpgt_ps(v4a, v4b), v4a));
-    v4ba = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4a, v4b), v4a), _mm_and_ps(_mm_cmpgt_ps(v4a, v4b), v4b));
-    _mm_storeu_ps(a+i, v4ba);
-    _mm_storeu_ps(b+i, v4ab);
-    v4bc = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4b, v4c), v4c), _mm_and_ps(_mm_cmpgt_ps(v4b, v4c), v4b));
-    v4cb = _mm_add_ps(_mm_and_ps(_mm_cmple_ps(v4b, v4c), v4b), _mm_and_ps(_mm_cmpgt_ps(v4b, v4c), v4c));
-    _mm_storeu_ps(b+i, v4cb);
-    _mm_storeu_ps(c+i, v4bc);
+
+    v4a = _mm_min_ps(v4a, v4c);
+    v4c = _mm_max_ps(v4a, v4c);
+    v4a = _mm_min_ps(v4a, v4b);
+    v4b = _mm_max_ps(v4a, v4b);
+    v4b = _mm_min_ps(v4b, v4c);
+    v4c = _mm_max_ps(v4b, v4c);
+
+    _mm_storeu_ps(a + i, v4a);
+    _mm_storeu_ps(b + i, v4b);
+    _mm_storeu_ps(c + i, v4c);
   }
   for ( ; i < size; i++ ) {
     if ( a[i] > c[i] ) {
