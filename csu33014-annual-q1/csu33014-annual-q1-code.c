@@ -234,13 +234,18 @@ void Q1_vectorized_5(float * restrict a, float * restrict b,
     v4a = _mm_loadu_ps(a + i);
     v4b = _mm_loadu_ps(b + i);
     v4c = _mm_loadu_ps(c + i);
-
+    
+    temp = v4a;
     v4a = _mm_min_ps(v4a, v4c);
-    v4c = _mm_max_ps(v4a, v4c);
+    v4c = _mm_max_ps(temp, v4c);
+
+    temp = v4a;
     v4a = _mm_min_ps(v4a, v4b);
-    v4b = _mm_max_ps(v4a, v4b);
+    v4b = _mm_max_ps(temp, v4b);
+
+    temp = v4b;
     v4b = _mm_min_ps(v4b, v4c);
-    v4c = _mm_max_ps(v4b, v4c);
+    v4c = _mm_max_ps(v4c, temp);
 
     _mm_storeu_ps(a + i, v4a);
     _mm_storeu_ps(b + i, v4b);
