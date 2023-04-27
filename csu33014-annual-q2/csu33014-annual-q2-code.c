@@ -83,8 +83,7 @@ bool * find_duplicates_parallel(char ** list_a, int size_a, char ** list_b, int 
   qsort(int_b, size_b, sizeof(int), int_compare);
   #pragma omp parallel for simd
   for ( int i = 0; i < size_a; i++ ) { // for each string in list_a
-    int is_duplicate = bsearch(int_a+i, int_b, size_b, sizeof(int), int_compare)==NULL ? 0 : 1;
-    duplicates[i] = is_duplicate;
+    duplicates[i] = bsearch(int_a+i, int_b, size_b, sizeof(int), int_compare)==NULL ? 0 : 1;
   }
   return duplicates;
 }
